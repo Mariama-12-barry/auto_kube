@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: mysql
-          image: cheikht/mysql_ct
+          image: acb23/fil_rouge-db
           env:
             - name: MYSQL_ROOT_PASSWORD
               value: root
@@ -57,7 +57,7 @@ spec:
     spec:
       containers:
         - name: php-apache
-          image: cheikht/apache_ct
+          image: acb23/fil_rouge-php
           ports:
             - containerPort: 80
           env:
