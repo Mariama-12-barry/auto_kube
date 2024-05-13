@@ -1,0 +1,31 @@
+version: '1'
+services:
+  php:
+    build: 
+      context: .
+      dockerfile: Web.Dockerfile
+    ports:
+      - "8585:80"
+    depends_on:
+      - db
+    # volumes:
+    #   - .:/var/www/html
+    # environment:
+    #   DATABASE_HOST: db
+    #   DATABASE_USER: nazim
+    #   DATABASE_PASSWORD: passer
+    #   DATABASE_NAME: fil_rouge
+
+  db:
+    build:  
+      context: .
+      dockerfile: Db.Dockerfile
+    ports:
+      - "3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+  
+volumes:
+  mysql_data:
