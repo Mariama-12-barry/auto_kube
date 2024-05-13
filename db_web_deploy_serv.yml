@@ -84,6 +84,6 @@ spec:
     - name: http
       protocol: TCP
       port: 80
-      nodePort: 30101 # Port NodePort
+      nodePort: 30100 # Port NodePort
       targetPort: 80
   type: NodePort # Type de service
