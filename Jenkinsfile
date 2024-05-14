@@ -32,7 +32,7 @@ pipeline {
         // }
         stage('Deployer sur Kubernetes') {
         steps {
-        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+        withCredentials([file(credentialsId: 'reprise2_auto_kube', variable: 'KUBECONFIG')]) {
             script {
                 // Déployer sur Kubernetes
                 bat "kubectl apply -f db_web_deploy_serv.yml --kubeconfig=%KUBECONFIG% --validate=false"
