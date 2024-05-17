@@ -1,4 +1,3 @@
-# Fichier : main.tf
 
 terraform {
   required_providers {
@@ -45,4 +44,4 @@ resource  "kubernetes_manifest" "app-base" {
 resource  "kubernetes_manifest" "app-service" {
   manifest = yamldecode(file("../php_serv.yml"))
   
-}
+}<s
