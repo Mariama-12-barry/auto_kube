@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: db-base
+  namespace: default
 spec:
   replicas: 1
   selector:
@@ -31,6 +32,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: db
+  namespace: default
 spec:
   selector:
     app: db
@@ -45,6 +47,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app-base
+  namespace: default
 spec:
   replicas: 2
   selector:
@@ -77,6 +80,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: app-service
+  namespace: default
 spec:
   selector:
     app: app
@@ -84,6 +88,6 @@ spec:
     - name: http
       protocol: TCP
       port: 80
-      nodePort: 30100 # Port NodePort
+      nodePort: 30100  # Port NodePort
       targetPort: 80
   type: NodePort # Type de service

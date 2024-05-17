@@ -1,54 +1,70 @@
 pipeline {
     agent any
     environment {
-        DOCKER_COMPOSE_VERSION = '1.29.2'
-        DOCKER_IMAGE1 = "apache_ct"
-        DOCKER_TAG1 = "latest"
-        DOCKER_IMAGE2 = "mysql_ct"
-        DOCKER_TAG2 = "latest"
+        // Assurez-vous que ce chemin mène à votre kubeconfig local généré par Minikube
+        KUBECONFIG = "C:\Users\USER\.kube"
+        // Chemin où se trouvent vos fichiers Terraform dans votre projet
+        TERRA_DIR = "C:\Users\USER\Desktop\ODC\ODC\devops_aws_cheikh\terraform"
     }
     stages {
-        // stage('Cree les fichiers Image Docker') {
-        //     steps {
-        //         script {
-        //             bat "docker --version" // Vérifier que Docker est accessible
-        //             // Lancement de Docker Compose
-        //             bat "docker build -t ${DOCKER_IMAGE2}:${DOCKER_TAG1} -f Db.Dockerfile ."
-        //             bat "docker build -t ${DOCKER_IMAGE1}:${DOCKER_TAG2} -f Web.Dockerfile ."
-        //         }
-        //     }
-        // }
-        // stage('publier les images Docker') {
-        //     steps {
-        //         script {
-        //             bat "docker login -u cheikht -p m6rZ.uGUKpTXWkq"
-        //             // Mettez ici vos commandes pour pousser
-        //             bat "docker tag ${DOCKER_IMAGE1}:${DOCKER_TAG1} cheikht/${DOCKER_IMAGE1}:${DOCKER_TAG1}"
-        //             bat "docker push cheikht/${DOCKER_IMAGE1}:${DOCKER_TAG1}"
-        //             bat "docker tag ${DOCKER_IMAGE2}:${DOCKER_TAG2} cheikht/${DOCKER_IMAGE2}:${DOCKER_TAG2}"
-        //             bat "docker push cheikht/${DOCKER_IMAGE2}:${DOCKER_TAG2}"
-        //         }
-        //     }
-        // }
-        stage('Deployer sur Kubernetes') {
-        steps {
-        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-            script {
-                // Déployer sur Kubernetes
-                bat "kubectl apply -f db_web_deploy_serv.yml --kubeconfig=%KUBECONFIG% --validate=false"
+        stage('Initialization') {
+            steps {
+                // Affiche la version de Terraform pour le débogage
+                script {
+                    bat 'terraform --version'
+                }
+            }
+        }
+        
+        stage("Terraform Init") {
+            steps {
+                script {
+                    // Initialise Terraform
+                    bat "cd %TERRA_DIR% && terraform init"
+                }
+            }
+        }
+        
+        stage("Terraform Plan") {
+            steps {
+                script {
+                    // Exécute le plan Terraform
+                    bat "cd %TERRA_DIR% && terraform plan"
+                }
+            }
+        }
+        
+        stage("Terraform Apply") {
+            steps {
+                script {
+                    // Applique la configuration Terraform
+                    bat "cd %TERRA_DIR% && terraform apply --auto-approve"
+                }
             }
         }
     }
-}
-
- }
     post {
+        always {
+            script {
+                // Nettoie l'environnement après l'exécution du pipeline
+                bat "cd %TERRA_DIR% && terraform destroy --auto-approve"
+            }
+        }
         success {
-           // bat 'docker-compose down -v'
-            slackSend channel: '#projetdevops', message: 'Build réussi'
+            // Envoyer un email de succès si le déploiement est réussi
+            emailext (
+                subject: "Notification de build Jenkins - Succès",
+                body: "Le build de votre pipeline Jenkins s'est terminé avec succès.",
+                to: "mbmariamabarry1@gmail.com"
+            )
         }
         failure {
-            slackSend channel: '#projetdevops', message: 'Build échoué'
+            // Envoyer un email d'échec si l'exécution échoue
+            emailext (
+                subject: "Notification de build Jenkins - Échec",
+                body: "Le build de votre pipeline Jenkins a échoué.",
+                to: "mbmariamabarry1@gmail.com"
+            )
         }
     }
 }
