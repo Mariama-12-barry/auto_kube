@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         // Assurez-vous que ce chemin mène à votre kubeconfig local généré par Minikube
-        KUBECONFIG = "C:\\Users\\USER\.kube\\config"
+        KUBECONFIG = "C:/Users/USER/.kube/config"
         // Chemin où se trouvent vos fichiers Terraform dans votre projet
         TERRA_DIR = "C:\Users\USER\Desktop\ODC\ODC\devops_aws_cheikh\terraform"
     }
