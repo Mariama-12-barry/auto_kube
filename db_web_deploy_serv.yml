@@ -27,6 +27,13 @@ spec:
               value: db
           ports:
             - containerPort: 3306
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
 ---
 apiVersion: v1
 kind: Service
@@ -40,8 +47,8 @@ spec:
     - protocol: TCP
       port: 3306
       targetPort: 3306
-      nodePort: 31100
-  type: NodePort # Type de service
+  type: NodePort
+  nodePort: 31100
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -72,6 +79,13 @@ spec:
               value: root
             - name: DATABASE_NAME
               value: fil_rouge
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
       volumes:
         - name: app-volume
           emptyDir: {}
@@ -88,6 +102,6 @@ spec:
     - name: http
       protocol: TCP
       port: 80
-      nodePort: 30100  # Port NodePort
       targetPort: 80
-  type: NodePort # Type de service
+  type: NodePort
+  nodePort: 30100
